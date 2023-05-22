@@ -36,3 +36,21 @@
     transform: rotate(360deg);
   }
 }
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.tile {
+  width: 40px;
+  height: 40px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  font-weight: bold;
+  text-transform: uppercase;
+}

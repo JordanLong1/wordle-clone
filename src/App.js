@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
+import classnames from "classnames";
+
 const API_URL = "https://random-word-api.herokuapp.com/word?length=5";
 
 function App() {
@@ -9,8 +11,10 @@ function App() {
   const [guesses, setGuesses] = useState(Array(6).fill(null));
   const [currentGuess, setCurrentGuess] = useState("");
   const [turns, setTurns] = useState(0);
+  const [shouldCheckGuess, setShouldCheckGuess] = useState(false);
 
   const onHandleSubmission = useCallback(() => {
+    setShouldCheckGuess(true);
     const copyOfGuesses = [...guesses];
     const foundGuess = copyOfGuesses.findIndex((val) => val === null);
 
@@ -58,17 +62,45 @@ function App() {
 
     const guessLength = 5;
 
+    let isCorrectTile = false;
+    let hasLetterInside = false;
+
     for (let i = 0; i < guessLength; i++) {
       const character = guess[i];
+      if (shouldCheckGuess && character !== undefined) {
+        for (let j = 0; j < solution.length; j++) {
+          const secondIterator = guess[j];
+          if (character === secondIterator) {
+            isCorrectTile = true;
+          } else if (
+            character !== secondIterator &&
+            solution.includes(secondIterator)
+          ) {
+            hasLetterInside = true;
+          }
+          // else {
+          //   hasLetterInside = false;
+          //   isCorrectTile = false;
+          // }
+        }
+      }
+
       tiles.push(
-        <div key={i} className="tile">
+        <div
+          key={i}
+          className={classnames("tile", {
+            isCorrectTile: isCorrectTile,
+            hasLetterInside: hasLetterInside,
+          })}
+        >
           {character}
         </div>
       );
     }
+
     return <div className="row">{tiles}</div>;
   }
-  console.log(turns);
+
   return (
     <div className="App">
       <h1>Wordle</h1>

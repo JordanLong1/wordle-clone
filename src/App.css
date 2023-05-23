@@ -53,4 +53,9 @@
   font-size: 24px;
   font-weight: bold;
   text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.tile.isCorrectTile {
+  background-color: gold;
 }

@@ -2,8 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-import Row from "./Row";
-
 const API_URL = "https://random-word-api.herokuapp.com/word?length=5";
 
 function App() {
@@ -14,19 +12,27 @@ function App() {
 
   const onHandleSubmission = useCallback(() => {
     const copyOfGuesses = [...guesses];
-    copyOfGuesses.push(currentGuess);
+    const foundGuess = copyOfGuesses.findIndex((val) => val === null);
+
+    copyOfGuesses.splice(foundGuess, 1, currentGuess);
+
     setGuesses(copyOfGuesses);
     setCurrentGuess("");
+    setTurns(0);
   }, [guesses, currentGuess]);
 
   const handleKeyDown = useCallback(
     (event) => {
-      setCurrentGuess((oldGuess) => oldGuess + event.key.toUpperCase());
-      if (event.key === "Enter") {
+      if (turns !== 5) {
+        setTurns((prevTurn) => prevTurn + 1);
+        setCurrentGuess((oldGuess) => oldGuess + event.key.toUpperCase());
+      }
+
+      if (event.key === "Enter" && turns === 5) {
         onHandleSubmission();
       }
     },
-    [onHandleSubmission]
+    [onHandleSubmission, turns]
   );
 
   useEffect(() => {
@@ -62,7 +68,7 @@ function App() {
     }
     return <div className="row">{tiles}</div>;
   }
-
+  console.log(turns);
   return (
     <div className="App">
       <h1>Wordle</h1>

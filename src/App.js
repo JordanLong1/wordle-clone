@@ -13,6 +13,31 @@ function App() {
   const [turns, setTurns] = useState(0);
   const [shouldCheckGuess, setShouldCheckGuess] = useState(false);
 
+  const formatGuess = useCallback(() => {
+    let solutionArray = [...solution];
+    let formattedGuess = [...currentGuess].map((l) => {
+      return { key: l, color: "grey" };
+    });
+
+    // find any green letters
+    formattedGuess.forEach((l, i) => {
+      if (solution[i] === l.key) {
+        formattedGuess[i].color = "green";
+        solutionArray[i] = null;
+      }
+    });
+
+    // find any yellow letters
+    formattedGuess.forEach((l, i) => {
+      if (solutionArray.includes(l.key) && l.color !== "green") {
+        formattedGuess[i].color = "yellow";
+        solutionArray[solutionArray.indexOf(l.key)] = null;
+      }
+    });
+
+    return formattedGuess;
+  }, [solution, currentGuess]);
+
   const onHandleSubmission = useCallback(() => {
     setShouldCheckGuess(true);
     const copyOfGuesses = [...guesses];
@@ -21,9 +46,11 @@ function App() {
     copyOfGuesses.splice(foundGuess, 1, currentGuess);
 
     setGuesses(copyOfGuesses);
-    setCurrentGuess("");
-    setTurns(0);
-  }, [guesses, currentGuess]);
+    // setCurrentGuess("");
+    // setTurns(0);
+    const test = formatGuess();
+    console.log(test);
+  }, [guesses, currentGuess, formatGuess]);
 
   const handleKeyDown = useCallback(
     (event) => {
@@ -67,23 +94,6 @@ function App() {
 
     for (let i = 0; i < guessLength; i++) {
       const character = guess[i];
-      if (shouldCheckGuess && character !== undefined) {
-        for (let j = 0; j < solution.length; j++) {
-          const secondIterator = guess[j];
-          if (character === secondIterator) {
-            isCorrectTile = true;
-          } else if (
-            character !== secondIterator &&
-            solution.includes(secondIterator)
-          ) {
-            hasLetterInside = true;
-          }
-          // else {
-          //   hasLetterInside = false;
-          //   isCorrectTile = false;
-          // }
-        }
-      }
 
       tiles.push(
         <div
@@ -91,6 +101,7 @@ function App() {
           className={classnames("tile", {
             isCorrectTile: isCorrectTile,
             hasLetterInside: hasLetterInside,
+            // hasNoMatches: !isCorrectTile && !hasLetterInside,
           })}
         >
           {character}
@@ -100,7 +111,7 @@ function App() {
 
     return <div className="row">{tiles}</div>;
   }
-
+  console.log("solution", solution);
   return (
     <div className="App">
       <h1>Wordle</h1>

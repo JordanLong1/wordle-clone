@@ -58,4 +58,12 @@
 
 .tile.isCorrectTile {
   background-color: gold;
+
+  .tile {
+    background-color: red;
+  }
 }
+
+/* .tile.hasNoMatches {
+  background-color: red;
+} */
